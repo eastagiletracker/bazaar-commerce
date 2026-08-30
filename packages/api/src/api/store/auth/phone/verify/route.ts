@@ -58,11 +58,15 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     ;[customer] = await customerModule.listCustomers({ email } as never, { take: 1 })
   }
   if (!customer) {
-    customer = await customerModule.createCustomers({
+    // createCustomers is overloaded: given one object it returns one customer,
+    // given an array it returns an array. The published types only describe the
+    // array form, so the single-object call has to be narrowed by hand.
+    const created = await customerModule.createCustomers({
       email,
       phone,
       has_account: true,
     } as never)
+    customer = (Array.isArray(created) ? created[0] : created) as typeof customer
   } else if (!customer.phone) {
     await customerModule.updateCustomers(customer.id, { phone } as never)
   }

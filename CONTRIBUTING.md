@@ -37,10 +37,9 @@ detail.
 
 ## Standards
 
-- **TypeScript.** Run `npx tsc --noEmit` in `packages/api`. It should be clean
-  except for one known pre-existing error in the phone verify route. The
-  storefront has 121 inherited type errors from the upstream starter and builds
-  with `ignoreBuildErrors`; do not add more.
+- **TypeScript.** Run `npx tsc --noEmit` in `packages/api`. It must be clean;
+  CI gates on it. The storefront carries 121 type errors inherited from the
+  upstream starter and builds with `ignoreBuildErrors`; do not add more.
 - **Comments explain why.** If a line encodes a decision, record what the
   alternative was and why it lost. The existing code is written this way and it
   is the main reason it is maintainable.

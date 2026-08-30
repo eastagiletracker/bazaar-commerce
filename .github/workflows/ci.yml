@@ -50,9 +50,9 @@ jobs:
 
       - name: Typecheck the API
         working-directory: packages/api
-        # The storefront carries 121 type errors inherited from the upstream
-        # Mercur starter and builds with ignoreBuildErrors. The API must stay
-        # clean, so only it is gated here. See docs/known-issues.md.
+        # The API must stay clean and this gates on it. The storefront carries
+        # 121 type errors inherited from the upstream Mercur starter and builds
+        # with ignoreBuildErrors, so it is not gated. See docs/known-issues.md.
         run: npx tsc --noEmit
 
       - name: Migrate
