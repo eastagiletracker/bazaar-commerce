@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: Typecheck and test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pkmkt
+          POSTGRES_PASSWORD: pkmkt
+          POSTGRES_DB: pkmkt
+        ports: ["5434:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6381:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s
+          --health-timeout 5s --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://pkmkt:pkmkt@localhost:5434/pkmkt
+      REDIS_URL: redis://localhost:6381
+      JWT_SECRET: ci-not-a-real-secret
+      COOKIE_SECRET: ci-not-a-real-secret
+      STORE_CORS: http://localhost:3100
+      ADMIN_CORS: http://localhost:3103
+      VENDOR_CORS: http://localhost:3102
+      AUTH_CORS: http://localhost:3100
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck the API
+        working-directory: packages/api
+        # The storefront carries 121 type errors inherited from the upstream
+        # Mercur starter and builds with ignoreBuildErrors. The API must stay
+        # clean, so only it is gated here. See docs/known-issues.md.
+        run: npx tsc --noEmit
+
+      - name: Migrate
+        working-directory: packages/api
+        run: bunx medusa db:migrate
+
+      - name: Seed
+        working-directory: packages/api
+        run: bun run seed:pk && bun run seed:commissions && bun run seed:digital
+
+      # Every suite below was proven able to fail before it was trusted.
+      # See CONTRIBUTING.md.
+      - name: Settlement ledger
+        working-directory: packages/api
+        run: bun run test:settlement
+
+      - name: Payout provider
+        working-directory: packages/api
+        run: bun run test:payout
+
+      - name: CSV importer
+        working-directory: packages/api
+        run: bun run test:csv
+
+      - name: Shopify connector
+        working-directory: packages/api
+        run: bun run test:shopify
+
+      - name: OTP
+        working-directory: packages/api
+        run: bun run test:otp
+
+      - name: Order confirmation
+        working-directory: packages/api
+        run: bun run test:confirmation
+
+      - name: Digital vault and fraud gate
+        working-directory: packages/api
+        run: bun run test:digital

@@ -1,0 +1,169 @@
+{
+  "$schema": "https://schema.org/SoftwareSourceCode",
+  "name": "Bazaar Commerce",
+  "description": "Open-source multi-vendor marketplace engine for cash-on-delivery markets.",
+  "repository": "https://github.com/Cubitrek/bazaar-commerce",
+  "license": "Apache-2.0",
+  "maintainer": "Cubitrek",
+  "status": "pre-production",
+  "builtOn": {
+    "medusa": "2.18.0",
+    "mercur": "2.3.0"
+  },
+  "runtime": {
+    "node": ">=20",
+    "packageManager": "bun",
+    "database": "PostgreSQL",
+    "cache": "Redis"
+  },
+  "problemDomain": {
+    "summary": "Ecommerce in markets where roughly 95% of orders are cash on delivery.",
+    "markets": [
+      "Pakistan",
+      "Bangladesh",
+      "Egypt",
+      "Nigeria",
+      "South Asia",
+      "Southeast Asia"
+    ],
+    "constraints": [
+      "No payment authorization exists, so there is nothing to capture.",
+      "Money arrives days later from a courier, in batches, sometimes short.",
+      "20-40% of parcels are returned to origin undelivered.",
+      "Stripe Connect does not serve many of these markets."
+    ]
+  },
+  "features": [
+    {
+      "id": "cod-settlement",
+      "name": "Cash-on-delivery settlement ledger",
+      "module": "packages/api/src/modules/settlement",
+      "docs": "docs/cod-settlement.md",
+      "tests": {
+        "command": "bun run test:settlement",
+        "assertions": 34
+      },
+      "capabilities": [
+        "Double-entry ledger; refuses to write unless debits equal credits",
+        "Idempotent on business-fact keys, so replayed courier files and webhooks cannot double-post",
+        "Courier remittance ingestion and matching on airway bill",
+        "Exception queue: unmatched, amount mismatch, duplicate, overdue",
+        "Provincial sales tax on commission and income-tax withholding",
+        "Orders become payable only on remittance, not on delivery"
+      ],
+      "keyDecisions": [
+        "Placement posts nothing: an order is not money.",
+        "A mismatched remittance is a dispute, not an automatic adjustment.",
+        "Collected-but-unremitted cash is not payable."
+      ]
+    },
+    {
+      "id": "order-confirmation",
+      "name": "Order confirmation before dispatch (anti-RTO)",
+      "module": "packages/api/src/modules/order-confirmation",
+      "docs": "docs/order-confirmation.md",
+      "tests": {
+        "command": "bun run test:confirmation",
+        "assertions": 40
+      },
+      "capabilities": [
+        "Holds dispatch until the buyer confirms, enforced in API middleware",
+        "RTO risk scoring as a pure function; prepaid and known buyers clear instantly",
+        "WhatsApp with SMS fallback, one-tap confirm or cancel link",
+        "Escalation queue for human phone calls",
+        "Derived, non-stored tokens that stay stable across retries"
+      ],
+      "keyDecisions": [
+        "Silence is not refusal except in the high-risk band, because most buyers ignore messages.",
+        "The gate fails OPEN: a jammed gate costs a seller every order.",
+        "Digital-only orders are exempt; there is no parcel to hold."
+      ]
+    },
+    {
+      "id": "digital-fulfilment",
+      "name": "Digital code vault and fraud gate",
+      "module": "packages/api/src/modules/digital-fulfilment",
+      "docs": "docs/digital-fulfilment.md",
+      "tests": {
+        "command": "bun run test:digital",
+        "assertions": 44
+      },
+      "capabilities": [
+        "AES-256-GCM encrypted code vault, key separate from the session secret",
+        "Atomic allocation via FOR UPDATE SKIP LOCKED; no code reaches two buyers",
+        "Per-seller keyed fingerprints for duplicate-upload rejection",
+        "Fraud gate scoring velocity, buyer verification and first-purchase value",
+        "Manual review queue with release or refuse",
+        "Refundability determined by whether the buyer has seen the code"
+      ],
+      "keyDecisions": [
+        "The gate fails CLOSED: a released code cannot be recalled.",
+        "Refusal requires evidence of fraud, not merely absence of trust.",
+        "The reveal is counted before the code is returned."
+      ]
+    },
+    {
+      "id": "payout-pakistan",
+      "name": "Payout rail for markets Stripe Connect does not serve",
+      "module": "packages/api/src/providers/payout-pakistan",
+      "tests": {
+        "command": "bun run test:payout",
+        "assertions": 26
+      },
+      "capabilities": [
+        "Implements Mercur IPayoutProvider (createPayoutAccount, createOnboarding, createPayout, getWebhookActionAndData)",
+        "Driver interface with a mock that models pending KYC and failed disbursements"
+      ]
+    },
+    {
+      "id": "phone-auth",
+      "name": "Phone-first OTP authentication",
+      "module": "packages/api/src/lib/otp",
+      "tests": {
+        "command": "bun run test:otp",
+        "assertions": 22
+      },
+      "capabilities": [
+        "Hashed codes with timing-safe comparison",
+        "Brute-force cap, resend cooldown and hourly ceiling per number",
+        "Identical responses for known and unknown numbers, preventing enumeration",
+        "Guest checkout that does not create duplicate customers"
+      ]
+    },
+    {
+      "id": "catalogue-import",
+      "name": "Bulk catalogue import and Shopify connector",
+      "module": "packages/api/src/lib/csv-import, packages/api/src/lib/shopify",
+      "tests": [
+        {
+          "command": "bun run test:csv",
+          "assertions": 34
+        },
+        {
+          "command": "bun run test:shopify",
+          "assertions": 29
+        }
+      ],
+      "capabilities": [
+        "Templated CSV import with row-level errors and no partial imports",
+        "Shopify OAuth with expiring token rotation, cost-based throttling and HMAC verification"
+      ]
+    }
+  ],
+  "verification": {
+    "totalAssertions": 229,
+    "suites": 7,
+    "standard": "Every suite was proven able to fail by deliberately breaking the code it covers before it was trusted.",
+    "smokeTests": [
+      "scripts/smoke-checkout.mjs",
+      "scripts/smoke-digital.mjs"
+    ]
+  },
+  "knownIssues": "docs/known-issues.md",
+  "blockedOnCommercialAgreements": [
+    "Payment service provider (payouts run on a mock driver)",
+    "SMS gateway and registered sender mask",
+    "WhatsApp Business verification and template approval",
+    "Courier contracts, especially COD remittance file formats"
+  ]
+}

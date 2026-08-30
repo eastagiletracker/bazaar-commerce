@@ -1,0 +1,51 @@
+name: Bug report
+description: Something behaves differently from what the docs say
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check [docs/known-issues.md](../blob/main/docs/known-issues.md)
+        first. Several defects are already documented there.
+
+        For anything touching money, digital codes or authentication, use
+        [SECURITY.md](../blob/main/SECURITY.md) instead of a public issue.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected, and what happened instead.
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      placeholder: |
+        1. bun run seed:pk
+        2. Place an order with...
+        3. Observe...
+    validations: { required: true }
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area
+      options:
+        - Settlement ledger / COD reconciliation
+        - Order confirmation (anti-RTO)
+        - Digital fulfilment (vault, fraud gate)
+        - Payouts
+        - Storefront
+        - Vendor or admin panel
+        - Setup and installation
+        - Other
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Logs or test output. Never paste real credentials or codes.
+      render: shell
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version

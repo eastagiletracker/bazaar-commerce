@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest something this should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you unable to do today? Describe the situation, not the solution.
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you have in mind
+  - type: input
+    id: market
+    attributes:
+      label: Which market
+      description: Cash-on-delivery markets differ. Knowing yours helps a lot.
+      placeholder: Pakistan, Bangladesh, Egypt, Nigeria...

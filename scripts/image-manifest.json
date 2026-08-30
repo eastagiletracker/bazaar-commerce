@@ -1,0 +1,52 @@
+[
+  {
+    "out": "apps/storefront/public/brand/cat-mobiles.png",
+    "aspect": "1:1",
+    "prompt": "Top-down product flat lay on a seamless soft warm off-white background. A modern smartphone, wireless earbuds and a smart watch arranged with generous negative space. Bright even studio lighting, soft shadows, warm neutral palette with one subtle deep jade green prop. Minimal premium e-commerce category tile. No text, no logos, no watermarks, no brand marks."
+  },
+  {
+    "out": "apps/storefront/public/brand/cat-computers.png",
+    "aspect": "1:1",
+    "prompt": "Top-down product flat lay on a seamless soft warm off-white background. A slim laptop, a wireless mouse and a USB hub arranged with generous negative space. Bright even studio lighting, soft shadows, warm neutral palette with one subtle deep jade green prop. Minimal premium e-commerce category tile. No text, no logos, no watermarks, no brand marks."
+  },
+  {
+    "out": "apps/storefront/public/brand/cat-fashion.png",
+    "aspect": "1:1",
+    "prompt": "Top-down product flat lay on a seamless soft warm off-white background. Neatly folded modern South Asian clothing in cream and sage tones with a leather sandal and a woven bag, generous negative space. Bright even studio lighting, soft shadows, warm neutral palette. Minimal premium e-commerce category tile. No text, no logos, no watermarks, no brand marks."
+  },
+  {
+    "out": "apps/storefront/public/brand/cat-beauty.png",
+    "aspect": "1:1",
+    "prompt": "Top-down product flat lay on a seamless soft warm off-white background. Unbranded cosmetic bottles, a glass serum dropper and a makeup brush arranged with generous negative space. Bright even studio lighting, soft shadows, warm neutral palette with one subtle deep jade green prop. Minimal premium e-commerce category tile. No text, no logos, no watermarks, no brand marks."
+  },
+  {
+    "out": "apps/storefront/public/brand/cat-home.png",
+    "aspect": "1:1",
+    "prompt": "Top-down product flat lay on a seamless soft warm off-white background. A ceramic mug, a folded linen textile and a small potted plant arranged with generous negative space. Bright even studio lighting, soft shadows, warm neutral palette. Minimal premium e-commerce category tile. No text, no logos, no watermarks, no brand marks."
+  },
+  {
+    "out": "apps/storefront/public/brand/cat-grocery.png",
+    "aspect": "1:1",
+    "prompt": "Top-down product flat lay on a seamless soft warm off-white background. Unbranded pantry staples: a glass jar of rice, loose spices in small bowls, and fresh produce, arranged with generous negative space. Bright even studio lighting, soft shadows, warm neutral palette. Minimal premium e-commerce category tile. No text, no logos, no watermarks, no brand marks."
+  },
+  {
+    "out": "apps/storefront/public/brand/cat-baby.png",
+    "aspect": "1:1",
+    "prompt": "Top-down product flat lay on a seamless soft warm off-white background. A soft knitted baby blanket, wooden stacking toy and a plush bear arranged with generous negative space. Bright even studio lighting, soft shadows, warm neutral palette with sage green accents. Minimal premium e-commerce category tile. No text, no logos, no watermarks, no brand marks."
+  },
+  {
+    "out": "apps/storefront/public/brand/cat-sports.png",
+    "aspect": "1:1",
+    "prompt": "Top-down product flat lay on a seamless soft warm off-white background. A rolled yoga mat, a dumbbell and a stainless steel water bottle arranged with generous negative space. Bright even studio lighting, soft shadows, warm neutral palette with one subtle deep jade green prop. Minimal premium e-commerce category tile. No text, no logos, no watermarks, no brand marks."
+  },
+  {
+    "out": "apps/storefront/public/brand/promo-sellers.png",
+    "aspect": "16:9",
+    "prompt": "Wide editorial photograph of a Pakistani small business owner, a man in his thirties in a clean shirt, packing orders into cardboard boxes in a bright tidy small warehouse. Shelves of neatly stacked inventory behind him, warm natural light, shallow depth of field. Optimistic and professional, not staged. Subject on the RIGHT, clean space on the LEFT for headline text. Premium commercial photography. No text, no logos, no watermarks."
+  },
+  {
+    "out": "apps/storefront/public/brand/promo-delivery.png",
+    "aspect": "16:9",
+    "prompt": "Wide editorial photograph of a friendly delivery rider in plain unbranded uniform handing a small parcel to a customer at a residential doorway in Pakistan. Warm late afternoon light, natural genuine expressions, shallow depth of field. Clean composition with space on the LEFT for headline text. Premium commercial photography, documentary feel. No text, no logos, no watermarks."
+  }
+]

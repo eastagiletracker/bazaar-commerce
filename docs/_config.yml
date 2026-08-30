@@ -1,0 +1,37 @@
+title: Bazaar Commerce
+description: >-
+  Open-source multi-vendor marketplace engine for cash-on-delivery markets.
+  A double-entry settlement ledger keyed on courier remittance, an anti-RTO
+  order confirmation gate, and an encrypted digital code vault. Built on
+  MedusaJS and Mercur in TypeScript.
+url: https://cubitrek.github.io
+baseurl: /bazaar-commerce
+lang: en
+
+remote_theme: just-the-docs/just-the-docs
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+author: Cubitrek
+logo: null
+search_enabled: true
+heading_anchors: true
+
+aux_links:
+  "GitHub":
+    - "https://github.com/Cubitrek/bazaar-commerce"
+
+footer_content: >-
+  Apache-2.0. Built by <a href="https://cubitrek.com">Cubitrek</a> on the
+  MIT-licensed <a href="https://medusajs.com">Medusa</a> and
+  <a href="https://github.com/mercurjs/mercur">Mercur</a>.
+
+exclude:
+  - design/
+
+defaults:
+  - scope: { path: "" }
+    values: { layout: default }

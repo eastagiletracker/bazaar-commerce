@@ -1,0 +1,18 @@
+{
+  "name": "@acme/admin",
+  "private": true,
+  "version": "2.3.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3103",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview --port 3103"
+  },
+  "dependencies": {
+    "@mercurjs/admin": "2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1"
+  }
+}

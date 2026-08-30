@@ -1,0 +1,39 @@
+# Local dev stack for pk-marketplace.
+# Ports are offset to avoid the other OrbStack stacks on this machine:
+# 5432 cubitrek_postgres, 5433 infra-postgres, 6380 cubitrek_redis.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: pkmkt_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pkmkt
+      POSTGRES_PASSWORD: pkmkt
+      POSTGRES_DB: pkmkt
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - pkmkt_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pkmkt -d pkmkt"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: pkmkt_redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6381:6379"
+    volumes:
+      - pkmkt_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  pkmkt_pgdata:
+  pkmkt_redisdata:

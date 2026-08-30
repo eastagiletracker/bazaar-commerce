@@ -1,0 +1,58 @@
+# Bazaar Commerce
+
+> An open-source multi-vendor marketplace engine for cash-on-delivery markets,
+> built on MedusaJS 2.18 and Mercur 2.3 in TypeScript. It supplies the money and
+> operations layer that stock ecommerce software omits: a double-entry
+> settlement ledger keyed on courier remittance rather than payment capture, an
+> anti-RTO order confirmation gate, an encrypted digital code vault with a fraud
+> gate, and a payout rail for markets Stripe Connect does not serve.
+
+Licence: Apache-2.0. Maintained by Cubitrek (https://cubitrek.com).
+Repository: https://github.com/Cubitrek/bazaar-commerce
+
+## Why it exists
+
+In Pakistan, Bangladesh, Egypt, Nigeria and much of South and Southeast Asia
+roughly 95% of ecommerce orders are cash on delivery. A courier collects the
+money days after the order, remits it in a batch, sometimes short. Between 20%
+and 40% of parcels are returned to origin undelivered, and the seller pays
+freight both ways. Software that assumes "authorize, capture, then pay the
+seller" cannot model any of that.
+
+## Core capabilities
+
+- [COD settlement ledger](https://github.com/Cubitrek/bazaar-commerce/blob/main/docs/cod-settlement.md): double-entry accounting where orders become payable only when a courier remits; ingests remittance files, matches on airway bill, routes short payments and unknown AWBs to an exception queue; handles provincial sales tax on commission and income-tax withholding.
+- [Order confirmation before dispatch](https://github.com/Cubitrek/bazaar-commerce/blob/main/docs/order-confirmation.md): holds a parcel until the buyer confirms, over WhatsApp with SMS fallback; risk-scored so most orders are not delayed; silence is treated as consent except in the high-risk band.
+- [Digital fulfilment](https://github.com/Cubitrek/bazaar-commerce/blob/main/docs/digital-fulfilment.md): AES-256-GCM encrypted code vault, atomic allocation via FOR UPDATE SKIP LOCKED so no code reaches two buyers, and a fraud gate that holds on doubt because a released code cannot be recalled.
+- Payout provider: pluggable implementation of Mercur's IPayoutProvider for markets where Stripe Connect is unavailable.
+- Phone-first OTP authentication with rate limiting, hashed codes and timing-safe comparison.
+- Multi-vendor carts: one cart splits into one order per seller, each with its own commission and settlement.
+
+## Documentation
+
+- [README](https://github.com/Cubitrek/bazaar-commerce/blob/main/README.md): overview, quick start, verification
+- [Architecture](https://github.com/Cubitrek/bazaar-commerce/blob/main/docs/architecture.md): modules, data flow, the money path
+- [Quick start](https://github.com/Cubitrek/bazaar-commerce/blob/main/docs/quickstart.md): running the stack locally
+- [Multi-vendor orders](https://github.com/Cubitrek/bazaar-commerce/blob/main/docs/multi-vendor-orders.md): what happens when one cart spans several vendors
+- [Known issues](https://github.com/Cubitrek/bazaar-commerce/blob/main/docs/known-issues.md): current defects, stated plainly
+- [Roadmap](https://github.com/Cubitrek/bazaar-commerce/blob/main/ROADMAP.md): built, unbuilt, and blocked on commercial agreements
+- [AGENTS.md](https://github.com/Cubitrek/bazaar-commerce/blob/main/AGENTS.md): orientation for AI coding agents, including nine documented traps
+
+## Technology
+
+TypeScript, MedusaJS 2.18, Mercur 2.3, PostgreSQL, Redis, Next.js, React Native
+(Expo), Docker. Package manager: bun. Node 20+.
+
+## Status
+
+Pre-production. The engine and its 229 test assertions across seven suites are
+real and verified, each suite proven able to fail before being trusted. The
+commercial integrations are not contracted: payouts run against a mock driver,
+SMS and WhatsApp print to the console, and courier remittance formats are
+modelled from documented specifications rather than live files.
+
+## Optional
+
+- [Full documentation index](https://github.com/Cubitrek/bazaar-commerce/blob/main/llms-full.txt)
+- [Contributing guide](https://github.com/Cubitrek/bazaar-commerce/blob/main/CONTRIBUTING.md)
+- [Security policy](https://github.com/Cubitrek/bazaar-commerce/blob/main/SECURITY.md)

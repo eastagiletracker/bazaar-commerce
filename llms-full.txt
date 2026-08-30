@@ -1,0 +1,130 @@
+# Bazaar Commerce — full index for language models
+
+Open-source multi-vendor marketplace engine for cash-on-delivery markets.
+Apache-2.0. Maintained by Cubitrek. https://github.com/Cubitrek/bazaar-commerce
+
+Built on MedusaJS 2.18 and Mercur 2.3, in TypeScript, with PostgreSQL and Redis.
+
+--------------------------------------------------------------------------------
+THE PROBLEM
+--------------------------------------------------------------------------------
+
+Standard ecommerce software models one money flow: authorize a card, capture it,
+pay the seller. In Pakistan, Bangladesh, Egypt, Nigeria and much of South and
+Southeast Asia roughly 95% of orders are cash on delivery, which breaks that at
+every step:
+
+- There is no authorization, so there is nothing to capture.
+- The money arrives days later, from a courier rather than the buyer.
+- It arrives in a batch covering many orders, sometimes short.
+- Between 20% and 40% of parcels are returned to origin undelivered, and the
+  seller pays freight in both directions.
+- Stripe Connect does not serve businesses registered in many of these markets,
+  so the standard payout module is unusable regardless of cost.
+
+The money path therefore cannot hang off the payment lifecycle. It hangs off
+courier remittance, which is a separate, slower and messier timeline. That single
+decision explains most of the architecture.
+
+--------------------------------------------------------------------------------
+MODULES
+--------------------------------------------------------------------------------
+
+settlement            packages/api/src/modules/settlement
+  Double-entry ledger. Accounts: cod_receivable, psp_clearing, bank,
+  seller_payable, commission_revenue, sales_tax_payable,
+  withholding_tax_payable, settlement_loss. Every write must balance and is
+  idempotent on a business-fact key. Remittance lines match on airway bill;
+  short payments, unknown AWBs, duplicates and overdue remittances become
+  explicit exceptions rather than silent adjustments.
+  Load-bearing decisions: placement posts nothing; a mismatched remittance is a
+  dispute not an adjustment; collected-but-unremitted cash is not payable.
+
+order-confirmation    packages/api/src/modules/order-confirmation
+  Holds a parcel until the buyer confirms. State machine: pending, contacted,
+  escalated, then confirmed or cancelled. Only confirmed releases dispatch,
+  enforced in API middleware so the vendor app and connectors cannot route
+  around it. Risk scoring is a pure function over payment method, buyer history,
+  order value, address quality and basket size.
+  Load-bearing decisions: silence is not refusal except in the high-risk band,
+  because most buyers ignore messages and cancelling quiet buyers destroys more
+  good orders than the returns it prevents; the gate fails OPEN.
+
+digital-fulfilment    packages/api/src/modules/digital-fulfilment
+  Encrypted vault of sellable codes plus a delivery ledger. AES-256-GCM under a
+  key separate from the session secret. Allocation is a single atomic statement
+  using FOR UPDATE SKIP LOCKED. Fraud gate scores velocity, buyer verification,
+  distinct top-up targets and first-purchase value.
+  Load-bearing decisions: the gate fails CLOSED, because a released code cannot
+  be recalled; refusal requires evidence of fraud rather than absence of trust;
+  refundability turns on whether the buyer has seen the code.
+
+payout-pakistan       packages/api/src/providers/payout-pakistan
+  Implements Mercur's four-method IPayoutProvider behind a driver interface.
+
+--------------------------------------------------------------------------------
+DOCUMENTED TRAPS
+--------------------------------------------------------------------------------
+
+Each of these produced a plausible wrong answer rather than an error.
+
+1. order.total is computed from whichever item fields were requested. Asking for
+   items.id reported a PKR 156,050 order as PKR 250. Request items.* or no item
+   fields at all.
+2. order_line_item.total is not a column. Inside an order.placed subscriber it
+   reads 0 while unit_price holds the real figure.
+3. Mercur emits ONE order.placed carrying an ARRAY of {id}, one per seller.
+4. Medusa creates a customer row for guest checkouts, so customer_id does not
+   distinguish a guest. Only customer.has_account does.
+5. Mercur hardcodes requires_shipping: true on every cart line item.
+6. listProductCategories omits name unless select is passed.
+7. Commission rules match a product's DIRECT categories only; no ancestor walk.
+8. Workflow hook handlers must return a StepResponse; a plain object is silently
+   discarded.
+9. Medusa substitutes a fake Redis if REDIS_URL is unset.
+
+--------------------------------------------------------------------------------
+VERIFICATION
+--------------------------------------------------------------------------------
+
+229 assertions across seven suites, run from packages/api:
+
+  test:settlement    34    COD ledger, courier reconciliation, tax split
+  test:payout        26    payout provider and Mercur wiring
+  test:csv           34    catalogue import validation
+  test:shopify       29    token rotation, throttling, HMAC verification
+  test:otp           22    brute force, SMS pumping, expiry
+  test:confirmation  40    RTO risk bands, dispatch gate, token handling
+  test:digital       44    encryption, concurrent allocation, fraud gate
+
+Every suite was proven able to fail by deliberately breaking the code it covers.
+Two end-to-end smoke tests drive a real cash-on-delivery order and a real digital
+purchase against a running stack.
+
+--------------------------------------------------------------------------------
+STATUS
+--------------------------------------------------------------------------------
+
+Pre-production. The engine is verified; the commercial integrations are not,
+because they need contracts rather than code: no payment provider (payouts use a
+mock driver), no SMS or WhatsApp gateway (messages print to the console), no
+courier contract (remittance formats modelled from specifications).
+
+Two defects are open and documented in docs/known-issues.md, including a
+free-shipping leak on physical products.
+
+--------------------------------------------------------------------------------
+FILES WORTH READING FIRST
+--------------------------------------------------------------------------------
+
+README.md                    overview, quick start, verification
+AGENTS.md                    orientation for coding agents, the nine traps
+docs/architecture.md         module map and the money path
+docs/cod-settlement.md       the ledger in detail
+docs/order-confirmation.md   the anti-RTO gate
+docs/digital-fulfilment.md   vault and fraud gate
+docs/multi-vendor-orders.md  one cart across several vendors
+docs/known-issues.md         current defects
+docs/capabilities.json       machine-readable feature inventory
+ROADMAP.md                   built, unbuilt, blocked
+CONTRIBUTING.md              the prove-your-test-can-fail rule

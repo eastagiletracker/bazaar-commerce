@@ -1,0 +1,27 @@
+Bazaar Commerce
+Copyright 2026 Cubitrek
+
+This product includes software developed at Cubitrek (https://cubitrek.com).
+
+Licensed under the Apache License, Version 2.0. See LICENSE for the full text.
+
+------------------------------------------------------------------------------
+Third-party components
+------------------------------------------------------------------------------
+
+This project is built on, and redistributes portions of, the following
+MIT-licensed projects:
+
+  Medusa (https://github.com/medusajs/medusa)
+  Copyright (c) Medusa
+  Licensed under the MIT License.
+
+  Mercur (https://github.com/mercurjs/mercur)
+  Copyright (c) Mercur
+  Licensed under the MIT License.
+
+Parts of the storefront, vendor panel and admin panel originate from the Mercur
+marketplace starter and remain under its MIT licence. The Pakistan-specific
+modules -- the cash-on-delivery settlement ledger, the order confirmation gate,
+the digital fulfilment vault and fraud gate, and the payout provider -- are
+original work by Cubitrek and are licensed under Apache-2.0 as above.

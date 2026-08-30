@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 36" role="img" aria-label="Bazaar">
+  <!-- Light-on-dark variant for the navy chrome header.
+       
+    Wordmark, hand-drawn as SVG rather than generated: a logo has to stay crisp
+    at 20px in a mobile header and weigh almost nothing. This is ~1KB.
+
+    The mark is a shopping bag whose handle doubles as a check — the trust
+    promise compressed into the smallest possible space.
+  -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 12.5h18l-1.7 16.2a2.6 2.6 0 0 1-2.6 2.3H11.3a2.6 2.6 0 0 1-2.6-2.3z"/>
+    <path d="M12 12.5V9.2A4.2 4.2 0 0 1 16.2 5h.6A4.2 4.2 0 0 1 21 9.2v3.3"/>
+  </g>
+  <path d="M11.6 21.6l3 3 6.2-6.2" fill="none" stroke="#FBBF24" stroke-width="2.6"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="37" y="27" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="25" font-weight="800" letter-spacing="-0.9" fill="#FFFFFF">Bazaar</text>
+</svg>
