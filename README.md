@@ -215,4 +215,5 @@ codes or authentication.
 
 ---
 
-Built by [Cubitrek](https://cubitrek.com).
+Created and maintained by [Faizan Ali Khan](https://github.com/phyxan) at
+[Cubitrek](https://cubitrek.com). See [AUTHORS](AUTHORS).
