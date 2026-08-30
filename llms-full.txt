@@ -98,6 +98,9 @@ VERIFICATION
   test:digital       44    encryption, concurrent allocation, fraud gate
 
 Every suite was proven able to fail by deliberately breaking the code it covers.
+226 of the 229 pass on a clean database; three checks in the CSV suite are
+order-dependent, pass only on a database with accumulated state, and are
+documented as an open issue rather than loosened.
 Two end-to-end smoke tests drive a real cash-on-delivery order and a real digital
 purchase against a running stack.
 

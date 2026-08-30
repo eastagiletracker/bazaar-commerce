@@ -117,15 +117,21 @@ Full walkthrough in [docs/quickstart.md](docs/quickstart.md).
 
 ## Verification
 
-**229 assertions across seven suites.** Every one has been **proven able to fail** by deliberately breaking the
-code it covers. A green test that cannot go red proves nothing, so each one was
-checked against a mutation before being trusted.
+**229 assertions across seven suites.** Every one was **proven able to fail** by
+deliberately breaking the code it covers. A green test that cannot go red proves
+nothing, so each was checked against a mutation before being trusted.
+
+On a clean database **226 pass**. Three checks in the CSV suite are
+order-dependent and fail from scratch; they were passing on developer machines
+for the wrong reason, which is exactly what continuous integration is for. They
+run in CI but do not gate the build. See
+[known issues](docs/known-issues.md).
 
 ```bash
 cd packages/api
 bun run test:settlement    # 34  double-entry ledger, courier reconciliation, tax
 bun run test:payout        # 26  payout provider and its wiring
-bun run test:csv           # 34  catalogue import validation
+bun run test:csv           # 34  catalogue import validation (3 order-dependent)
 bun run test:shopify       # 29  token rotation, throttling, HMAC verification
 bun run test:otp           # 22  OTP brute force, SMS pumping, expiry
 bun run test:confirmation  # 40  RTO risk bands, the dispatch gate, tokens

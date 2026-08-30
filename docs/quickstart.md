@@ -144,8 +144,11 @@ bun run test:confirmation  # 40
 bun run test:digital       # 44
 ```
 
-229 assertions. Each suite was proven able to fail by deliberately breaking the
-code it covers, which is the standard this repository holds. See
+229 assertions, of which 226 pass on a clean database. Three checks in the CSV
+suite are order-dependent and are documented in [known issues](known-issues.md).
+
+Each suite was proven able to fail by deliberately breaking the code it covers,
+which is the standard this repository holds. See
 [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---

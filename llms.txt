@@ -45,8 +45,9 @@ TypeScript, MedusaJS 2.18, Mercur 2.3, PostgreSQL, Redis, Next.js, React Native
 
 ## Status
 
-Pre-production. The engine and its 229 test assertions across seven suites are
-real and verified, each suite proven able to fail before being trusted. The
+Pre-production. The engine has 229 test assertions across seven suites, each
+proven able to fail before being trusted. 226 pass on a clean database; three
+checks in the CSV suite are order-dependent and documented as an open issue. The
 commercial integrations are not contracted: payouts run against a mock driver,
 SMS and WhatsApp print to the console, and courier remittance formats are
 modelled from documented specifications rather than live files.
