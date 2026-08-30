@@ -58,7 +58,7 @@ manufactures confidence rather than providing it.
 The project is **pre-production**. The engine is real; the commercial
 integrations are not, because they need signed contracts rather than code. The
 [known issues](known-issues.html) page lists every defect we are aware of,
-including two that are open.
+including the three that are open.
 
 ---
 

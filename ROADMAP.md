@@ -104,6 +104,6 @@ These cannot be finished by writing software.
 
 ## Known issues
 
-Two are open, including a free-shipping leak. See
+Three are open, including a free-shipping leak. See
 [docs/known-issues.md](docs/known-issues.md). We publish that list rather than
 wait for someone to find it.

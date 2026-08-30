@@ -3,6 +3,7 @@
 **An open-source multi-vendor marketplace engine for cash-on-delivery markets.**
 Built on [MedusaJS](https://medusajs.com) 2.18 and [Mercur](https://github.com/mercurjs/mercur) 2.3, in TypeScript.
 
+[![CI](https://github.com/Cubitrek/bazaar-commerce/actions/workflows/ci.yml/badge.svg)](https://github.com/Cubitrek/bazaar-commerce/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Built on Medusa](https://img.shields.io/badge/built%20on-MedusaJS%202.18-000000.svg)](https://medusajs.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org/)
@@ -197,7 +198,7 @@ code:
 - No courier contract, so remittance formats are modelled from documented specs.
 
 [docs/known-issues.md](docs/known-issues.md) lists every defect we know about,
-including two open ones. We would rather publish that list than have you find it.
+including three that are open. We would rather publish that list than have you find it.
 
 ---
 

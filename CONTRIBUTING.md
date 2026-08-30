@@ -69,7 +69,7 @@ issue if there is one.
   webhooks for other cash-on-delivery markets.
 - Payment providers for markets Stripe Connect does not serve.
 - Localisation, particularly right-to-left languages.
-- The two open issues in `docs/known-issues.md`.
+- The three open issues in `docs/known-issues.md`.
 
 ## Licence
 

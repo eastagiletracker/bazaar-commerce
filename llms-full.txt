@@ -113,8 +113,8 @@ because they need contracts rather than code: no payment provider (payouts use a
 mock driver), no SMS or WhatsApp gateway (messages print to the console), no
 courier contract (remittance formats modelled from specifications).
 
-Two defects are open and documented in docs/known-issues.md, including a
-free-shipping leak on physical products.
+Three defects are open and documented in docs/known-issues.md, including a
+free-shipping leak on physical products and an order-dependent test suite.
 
 --------------------------------------------------------------------------------
 FILES WORTH READING FIRST

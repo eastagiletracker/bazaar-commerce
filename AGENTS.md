@@ -115,5 +115,5 @@ error, which is why they are listed rather than left to be rediscovered.
 
 ## Known-broken
 
-`docs/known-issues.md` is current and honest. Two issues are open, including a
+`docs/known-issues.md` is current and honest. Three issues are open, including a
 free-shipping leak. Read it before assuming something is a new bug.
