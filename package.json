@@ -11,7 +11,7 @@
   "dependencies": {
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "zod": "3.25.76",
+    "zod": "4.5.4",
     "@medusajs/icons": "2.18.0",
     "@medusajs/ui": "4.1.19",
     "@mercurjs/dashboard-sdk": "2.3.0",
@@ -61,7 +61,7 @@
     "@medusajs/test-utils": "2.18.0",
     "@medusajs/types": "2.18.0",
     "@medusajs/ui": "4.1.19",
-    "zod": "3.25.76"
+    "zod": "4.5.4"
   },
   "overrides": {
     "@medusajs/admin-sdk": "2.18.0",
@@ -76,7 +76,7 @@
     "@medusajs/test-utils": "2.18.0",
     "@medusajs/types": "2.18.0",
     "@medusajs/ui": "4.1.19",
-    "zod": "3.25.76"
+    "zod": "4.5.4"
   },
   "pnpm": {
     "overrides": {
@@ -92,7 +92,7 @@
       "@medusajs/test-utils": "2.18.0",
       "@medusajs/types": "2.18.0",
       "@medusajs/ui": "4.1.19",
-      "zod": "3.25.76"
+      "zod": "4.5.4"
     }
   },
   "workspaces": [
