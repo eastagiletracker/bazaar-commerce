@@ -51,7 +51,7 @@ markets, not email.
 
 ## Verified, honestly
 
-229 assertions across seven suites. Every one was **proven able to fail** by
+233 assertions across seven suites. Every one was **proven able to fail** by
 deliberately breaking the code it covers, because a green test that cannot go red
 manufactures confidence rather than providing it.
 

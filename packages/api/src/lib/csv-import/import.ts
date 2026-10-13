@@ -137,14 +137,15 @@ export async function importCatalogCsv(
   // Medusa product options: passing `options` directly is rejected because the
   // workflow injects a `__default__` option of its own.
   //
-  // KNOWN LIMITATION. Creating a new axis value and having Mercur mirror it
-  // onto the Medusa product option does not currently work through either the
-  // module service or the values workflow — the product then fails with
-  // "Option value X does not exist for option Y". Until that is resolved,
-  // multi-variant rows only import against axis values that ALREADY exist.
-  // Anything else is reported as a row-level error rather than half-imported
-  // or silently flattened into separate products, which would misrepresent
-  // what the seller uploaded. Single-variant rows are unaffected.
+  // A value is only usable once it is mirrored onto the Medusa product option,
+  // and that depends on the AXIS: an attribute with a product_option_id (made
+  // by createProductAttributesWorkflow, as seed:pk does) has every new value
+  // mirrored by createProductAttributeValuesWorkflow; an attribute without one
+  // (made through the module service) never gets a mirrored value, and the
+  // product would fail with "Option value X does not exist for option Y".
+  // Rows on such an axis are reported as row-level errors rather than
+  // half-imported or silently flattened into separate products, which would
+  // misrepresent what the seller uploaded. Single-variant rows are unaffected.
   const attributeByName = await ensureVariantAxes(container, toCreate);
 
   const unsupported: RowError[] = [];

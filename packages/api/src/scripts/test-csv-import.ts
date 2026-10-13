@@ -205,9 +205,21 @@ export default async function testCsvImport({ container }: ExecArgs) {
       Number(offer?.prices?.[0]?.amount) === 3499 && offer?.prices?.[0]?.currency_code === "pkr",
       `${offer?.prices?.[0]?.amount} ${offer?.prices?.[0]?.currency_code}`);
 
-    // Known limitation: a variant axis value that is not mirrored onto the
-    // Medusa option cannot be used. It must fail loudly and import nothing,
-    // never half-import or flatten the variants into separate products.
+    // Variant axes. Whether a value is usable depends on one fact: is the axis
+    // mirrored onto a Medusa product option (product_attribute.product_option_id)?
+    // When it is, createProductAttributeValuesWorkflow mirrors any new value and
+    // the import works. When it is not, no value on it can ever be used and the
+    // importer must refuse the rows.
+    //
+    // These checks used to assert the rejection against the shared "Size" axis.
+    // seed:pk creates that axis through the workflow, so it IS mirrored, and on a
+    // clean database the import the checks expected to be rejected succeeded.
+    // They only passed on databases whose "Size" values predated the mirroring.
+    // Each case below now builds its own precondition instead of inheriting it.
+
+    // Supported: a mirrored axis. Small and Medium are created and mirrored on
+    // the first run against a clean database and reused after that; either way
+    // the outcome must be the same.
     const variantCsv = [
       header,
       `pk-kurta-${stamp},KRT-${stamp}-S,Cotton Kurta,Men's Fashion,2499,15,Summer kurta,Bonanza,,Size,Small`,
@@ -219,21 +231,101 @@ export default async function testCsvImport({ container }: ExecArgs) {
       memberId: members[0].id,
       csv: variantCsv,
     });
-    check("Unsupported variant axis value is rejected, not half-imported",
-      !variantResult.ok && variantResult.productsCreated === 0,
-      `ok=${variantResult.ok} products=${variantResult.productsCreated}`);
-    check("Rejection is row-level and names the offending value",
-      variantResult.errors.length === 2 &&
-        variantResult.errors.every((e) => e.column === "option_value") &&
-        variantResult.errors.some((e) => /not available yet/.test(e.message)),
-      variantResult.errors[0]?.message?.slice(0, 90));
+    check("Variant rows on a mirrored axis import as ONE product",
+      variantResult.ok && variantResult.productsCreated === 1 && variantResult.offersCreated === 2,
+      `ok=${variantResult.ok} products=${variantResult.productsCreated} offers=${variantResult.offersCreated}` +
+        (variantResult.errors.length ? `, errors: ${variantResult.errors[0].message.slice(0, 80)}` : ""));
 
-    const { data: leaked } = await query.graph({
+    const { data: kurtas } = await query.graph({
       entity: "product",
-      fields: ["id"],
+      fields: ["id", "variants.sku", "variants.options.value"],
       filters: { handle: `pk-kurta-${stamp}` },
     });
-    check("Rejected variant product left nothing behind", (leaked ?? []).length === 0);
+    const sizeBySku = new Map<string, string[]>(
+      ((kurtas?.[0]?.variants ?? []) as any[]).map((v) => [
+        v.sku,
+        (v.options ?? []).map((o: any) => o.value),
+      ])
+    );
+    check("Each variant carries the size it was uploaded with",
+      sizeBySku.size === 2 &&
+        (sizeBySku.get(`KRT-${stamp}-S`) ?? []).includes("Small") &&
+        (sizeBySku.get(`KRT-${stamp}-M`) ?? []).includes("Medium"),
+      JSON.stringify(Object.fromEntries(sizeBySku)));
+
+    const { data: kurtaOffers } = await query.graph({
+      entity: "offer",
+      fields: ["sku", "seller_id", "prices.amount"],
+      filters: { sku: [`KRT-${stamp}-S`, `KRT-${stamp}-M`] },
+    });
+    check("Each variant gets its own offer for the seller at the CSV price",
+      (kurtaOffers ?? []).length === 2 &&
+        kurtaOffers.every(
+          (o: any) => o.seller_id === seller.id && Number(o.prices?.[0]?.amount) === 2499
+        ),
+      `${(kurtaOffers ?? []).length} offers`);
+
+    // Unsupported: an axis with no mirrored option. Creating it through the
+    // module service rather than the workflow is exactly how such an axis comes
+    // to exist, and a per-run handle keeps the case independent of whatever the
+    // database already holds. It is deleted again afterwards so it never shows
+    // up as a storefront filter.
+    const attributeModule: any = container.resolve(MercurModules.PRODUCT_ATTRIBUTE);
+    const [unmirrored] = await attributeModule.createProductAttributes([
+      {
+        name: `Fit ${stamp}`,
+        handle: `fit-${stamp}`,
+        type: "multi_select",
+        is_variant_axis: true,
+        is_filterable: false,
+        values: [
+          { name: "Slim", rank: 0 },
+          { name: "Loose", rank: 1 },
+        ],
+      },
+    ]);
+
+    try {
+      const { data: axis } = await query.graph({
+        entity: "product_attribute",
+        fields: ["id", "product_option_id"],
+        filters: { id: unmirrored.id },
+      });
+      // Guard the precondition, so this case cannot drift back into passing
+      // for the wrong reason.
+      check("Test axis really has no mirrored product option",
+        axis?.length === 1 && !axis[0].product_option_id,
+        `product_option_id=${axis?.[0]?.product_option_id}`);
+
+      const unsupportedCsv = [
+        header,
+        `pk-chino-${stamp},CHN-${stamp}-S,Chino Trousers,Men's Fashion,3299,10,Cotton chino,Bonanza,,Fit ${stamp},Slim`,
+        `pk-chino-${stamp},CHN-${stamp}-L,Chino Trousers,Men's Fashion,3299,10,Cotton chino,Bonanza,,Fit ${stamp},Loose`,
+      ].join("\n");
+
+      const rejected = await importCatalogCsv(container, {
+        sellerId: seller.id,
+        memberId: members[0].id,
+        csv: unsupportedCsv,
+      });
+      check("Unsupported variant axis value is rejected, not half-imported",
+        !rejected.ok && rejected.productsCreated === 0,
+        `ok=${rejected.ok} products=${rejected.productsCreated}`);
+      check("Rejection is row-level and names the offending value",
+        rejected.errors.length === 2 &&
+          rejected.errors.every((e) => e.column === "option_value") &&
+          rejected.errors.some((e) => /not available yet/.test(e.message)),
+        rejected.errors[0]?.message?.slice(0, 90));
+
+      const { data: leaked } = await query.graph({
+        entity: "product",
+        fields: ["id"],
+        filters: { handle: `pk-chino-${stamp}` },
+      });
+      check("Rejected variant product left nothing behind", (leaked ?? []).length === 0);
+    } finally {
+      await attributeModule.deleteProductAttributes([unmirrored.id]);
+    }
   }
 
   console.log("");

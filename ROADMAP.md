@@ -9,16 +9,14 @@ Last reviewed 2026-08-13.
 
 ## Built and verified
 
-**229 assertions across seven suites**, each proven able to fail by deliberately
-breaking the code it covers. 226 pass on a clean database; three checks in the
-CSV suite are order-dependent and are tracked in
-[known issues](docs/known-issues.md).
+**233 assertions across seven suites**, each proven able to fail by deliberately
+breaking the code it covers. All of them pass on a clean database.
 
 | Area | Checks | What it proves |
 |---|---|---|
 | Settlement ledger | 34 | Cash is tracked correctly through courier chaos |
 | Payout provider | 26 | The rail works and is wired into Mercur |
-| CSV importer | 34 | Bulk upload works; bad files import nothing (3 order-dependent) |
+| CSV importer | 38 | Bulk upload works; bad files import nothing |
 | Shopify connector | 29 | Token rotation, throttling, signature verification |
 | OTP | 22 | Brute force, SMS pumping and expiry are all defended |
 | Order confirmation | 40 | Unconfirmed parcels cannot be dispatched |
@@ -104,6 +102,6 @@ These cannot be finished by writing software.
 
 ## Known issues
 
-Three are open, including a free-shipping leak. See
+Two are open, including a free-shipping leak. See
 [docs/known-issues.md](docs/known-issues.md). We publish that list rather than
 wait for someone to find it.

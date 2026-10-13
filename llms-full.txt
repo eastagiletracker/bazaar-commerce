@@ -87,20 +87,18 @@ Each of these produced a plausible wrong answer rather than an error.
 VERIFICATION
 --------------------------------------------------------------------------------
 
-229 assertions across seven suites, run from packages/api:
+233 assertions across seven suites, run from packages/api:
 
   test:settlement    34    COD ledger, courier reconciliation, tax split
   test:payout        26    payout provider and Mercur wiring
-  test:csv           34    catalogue import validation
+  test:csv           38    catalogue import validation
   test:shopify       29    token rotation, throttling, HMAC verification
   test:otp           22    brute force, SMS pumping, expiry
   test:confirmation  40    RTO risk bands, dispatch gate, token handling
   test:digital       44    encryption, concurrent allocation, fraud gate
 
 Every suite was proven able to fail by deliberately breaking the code it covers.
-226 of the 229 pass on a clean database; three checks in the CSV suite are
-order-dependent, pass only on a database with accumulated state, and are
-documented as an open issue rather than loosened.
+All 233 pass on a clean database.
 Two end-to-end smoke tests drive a real cash-on-delivery order and a real digital
 purchase against a running stack.
 
@@ -113,8 +111,8 @@ because they need contracts rather than code: no payment provider (payouts use a
 mock driver), no SMS or WhatsApp gateway (messages print to the console), no
 courier contract (remittance formats modelled from specifications).
 
-Three defects are open and documented in docs/known-issues.md, including a
-free-shipping leak on physical products and an order-dependent test suite.
+Two defects are open and documented in docs/known-issues.md, including a
+free-shipping leak on physical products.
 
 --------------------------------------------------------------------------------
 FILES WORTH READING FIRST

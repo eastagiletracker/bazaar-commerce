@@ -137,7 +137,7 @@
       "tests": [
         {
           "command": "bun run test:csv",
-          "assertions": 34
+          "assertions": 38
         },
         {
           "command": "bun run test:shopify",
@@ -151,15 +151,14 @@
     }
   ],
   "verification": {
-    "totalAssertions": 229,
+    "totalAssertions": 233,
     "suites": 7,
     "standard": "Every suite was proven able to fail by deliberately breaking the code it covers before it was trusted.",
     "smokeTests": [
       "scripts/smoke-checkout.mjs",
       "scripts/smoke-digital.mjs"
     ],
-    "passingOnCleanDatabase": 226,
-    "caveat": "Three checks in the CSV suite are order-dependent: they pass on a database with accumulated state and fail from scratch. Tracked in docs/known-issues.md and not gated in CI."
+    "passingOnCleanDatabase": 233
   },
   "knownIssues": "docs/known-issues.md",
   "blockedOnCommercialAgreements": [

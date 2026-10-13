@@ -137,15 +137,14 @@ non-refundable at that moment.
 cd packages/api
 bun run test:settlement    # 34
 bun run test:payout        # 26
-bun run test:csv           # 34
+bun run test:csv           # 38
 bun run test:shopify       # 29
 bun run test:otp           # 22
 bun run test:confirmation  # 40
 bun run test:digital       # 44
 ```
 
-229 assertions, of which 226 pass on a clean database. Three checks in the CSV
-suite are order-dependent and are documented in [known issues](known-issues.md).
+233 assertions, all of which pass on a clean database.
 
 Each suite was proven able to fail by deliberately breaking the code it covers,
 which is the standard this repository holds. See

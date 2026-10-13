@@ -65,29 +65,6 @@ decided, either implementation would be guesswork.
 
 See [multi-vendor-orders.md](multi-vendor-orders.md).
 
-### 3. Three CSV importer checks are order-dependent
-
-**Impact:** `bun run test:csv` reports 34/34 on a database with accumulated
-state and 31/34 on a clean one. It was passing for the wrong reason.
-
-**What happens.** Checks 32 to 34 assert a known limitation: a variant axis
-value that is not mirrored onto the Medusa product option cannot be used, and
-must fail loudly rather than half-import. On a clean database the import those
-checks expect to be *rejected* instead **succeeds**, and in succeeding it mirrors
-`Small` and `Medium` onto the `Size` option itself.
-
-On a long-lived development database the same import is skipped as a duplicate,
-the option values are never added, and the limitation appears to hold.
-
-**Why it is not "fixed" by loosening the assertion.** The assertion is the
-valuable part: an unsupported axis value must never half-import. What is unclear
-is under which conditions the mirroring actually applies, and that needs
-establishing before the test can be made deterministic.
-
-**Status.** The suite still runs in CI but does not gate the build, and is
-labelled informational. Contributions welcome; see
-[CONTRIBUTING.md](../CONTRIBUTING.md).
-
 ---
 
 ## Limitations, by design or by circumstance
@@ -119,6 +96,14 @@ labelled informational. Contributions welcome; see
   That understates real returns, because the buyer who ignores everything and
   then refuses at the door never appears in it. Wire courier outcomes in once
   remittance files flow.
+
+### Catalogue import
+
+- Variant rows only import on an axis that is mirrored onto a Medusa product
+  option. Axes created by `createProductAttributesWorkflow`, as `seed:pk` does,
+  are, and new values on them are mirrored automatically. An axis created
+  through the attribute module service has no mirrored option, so rows that use
+  it are rejected row by row and nothing is imported.
 
 ### Storefront
 
